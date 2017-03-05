@@ -24,7 +24,7 @@ err, response, body = Request.post('httpbin.org/post', data)
 
 # access json response
 
-if not err annd response.statusCode is 200:
+if not err and response.statusCode is 200:
   print(body['data'])
 
 ```
