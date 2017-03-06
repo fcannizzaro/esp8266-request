@@ -38,12 +38,17 @@ err, _ = Request.post('httpbin.org/post', data, file='response.txt')
 # Request
 Use python dictionaries for headers and post data.
 
-# Response
-```python
-status = response.statusCode  # 200, 404 ..
-headers = response.headers
-body = response.body
-```
+# Response (Class)
+
+## statusCode
+request status code 200, 404, ...
+
+## headers
+python dictionary
+
+## body
+response body (text or dictionary)
+
 
 # JSON
 If response body is a **json**, body is a python **dictionary**.
