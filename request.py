@@ -4,6 +4,13 @@ import ure as re
 
 print('\n >> using esp8266-Request v1.0.0\n')
 
+class Response:
+
+  def __init__(self, statusCode, body, headers):
+    self.body = body
+    self.headers = headers
+    self.statusCode = statusCode
+
 class Request:
 
   @staticmethod
@@ -22,51 +29,62 @@ class Request:
     
 
   @staticmethod
-  def response(req,send):
+  def response(req,send,file):
 
     req.send(str.encode(send))
 
     data = req.recv(512)
-    res = ''
+ 
+    if file:
 
-    while data:
-      res += str(data,'utf-8')
-      data = req.recv(512)
+      f = open(file, 'a')
+
+      while data:
+        f.seek(0, 2)
+        f.write(str(data,'utf-8'))
+        data = req.recv(512)
+
+      f.close()
+
+    else:
+
+      res = ''
+
+      while data:
+        res += str(data,'utf-8')
+        data = req.recv(512)
+
+      headers = {}
+      split = res.split('\r\n')
+
+      for idx, value in enumerate(split):
+        if not value:
+          body = '\r\n'.join(split[idx+1:])
+          break
+        elif ":" in value:
+          line = value.split(':', 1)
+          key = line[0]
+          headers[key] = line[1][1:]
+
+      if "application/json" in (headers['Content-Type'] or headers['content-type'] or ''):
+        body = json.loads(body)
+
+      # Extract status code
+      _, statusCode, _ = split[0].split(' ', 2)
+    
+      return (None, Response(int(statusCode), headers, body))
 
     req.close()
     
-    headers = {}
-    split = res.split('\r\n')
-
-    for idx, value in enumerate(split):
-      if not value:
-        body = '\r\n'.join(split[idx+1:])
-        break
-      elif ":" in value:
-        line = value.split(':', 1)
-        key = line[0]
-        headers[key] = line[1][1:]
-
-    if "application/json" in (headers['Content-Type'] or headers['content-type'] or ''):
-      body = json.loads(body)
-
-    # Extract status code
-    _, statusCode, _ = split[0].split(' ', 2)
-    
-    response = {
-      'statusCode' : int(statusCode),
-      'headers' : headers
-    }
-
-    return (None,response,body)
+    return (None,None)
 
   @staticmethod
-  def send(method, url, headers={}, content=None):
+  def send(method, url, headers, file, content=None):
     
     err, path, ip, port = Request.parse(url)
 
     if err:
-      return (err, None, None, None)
+      return (err, None)
 
     else:
       try:
@@ -85,18 +103,18 @@ class Request:
         if content is not None:
           send += content
           
-        return Request.response(req,send)
+        return Request.response(req,send,file)
 
       except Exception as e:
         return (e, None, None)
 
   @staticmethod
-  def get(url,headers={}):
-    return Request.send('GET', url, headers)
+  def get(url,headers={},file=None):
+    return Request.send('GET', url, headers,file)
   
   @staticmethod
-  def post(url,body={},headers={}):
+  def post(url,body={},headers={},file=None):
     data = json.dumps(body)
     headers["content-length"] = len(data)
     headers["content-type"] = "application/json"
-    return Request.send('POST', url, headers, data)
+    return Request.send('POST', url, headers, file, data)

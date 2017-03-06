@@ -8,8 +8,11 @@ from request import Request
 heads = { 'Authorization': 'Basic QWxhZGRpbjpPcGVuU2VzYW1l' }
 
 # Get Request
+err, response = Request.get('httpbin.org/get', heads)
 
-err, response, body = Request.get('httpbin.org/get', heads)
+# JSON response
+if not err and response.statusCode is 200:
+  print(response.body)
 
 # Post Request (JSON Data)
 
@@ -20,13 +23,8 @@ data = {
   }
 }
 
-err, response, body = Request.post('httpbin.org/post', data)
-
-# access json response
-
-if not err and response['statusCode'] is 200:
-  print(body['data'])
-
+# Response Body as file
+err, response = Request.post('httpbin.org/post', data, file='response.json')
 ```
 
 # Valid URL
@@ -42,8 +40,9 @@ Use python dictionaries for headers and post data.
 
 # Response
 ```python
-status = response['statusCode']  # 200, 404 ..
-headers = response['headers'] 
+status = response.statusCode  # 200, 404 ..
+headers = response.headers
+body = response.body
 ```
 
 # JSON
