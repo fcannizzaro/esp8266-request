@@ -48,7 +48,3 @@ python dictionary
 
 ## body
 response body (text or dictionary)
-
-
-# JSON
-If response body is a **json**, body is a python **dictionary**.
