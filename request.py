@@ -9,25 +9,17 @@ class Request:
   @staticmethod
   def parse(url):
 
-    regexIp = r"(?:https?://)?((?:\d|\.)+)((?::\d+)?)(\/?.*)"
     regex = r"(?:https?://)?(?:www\.)?([^:/]*)((?::\d+)?)(\/?.*)"
 
-    mIp = re.match(regexIp,url)
-    mUrl = re.match(regex,url)
-
-    if mIp:
-     m = re.search(regexIp,url)
-     port = m.group(2) or ':80'
-    elif mUrl:
+    if re.match(regex,url):
       m = re.search(regex,url)
       port = m.group(2) or ':80'
-    
-    if not mUrl and not mIp:
-      return ('Invalid Url',None,None)
-    else:            
-      port = int(port[1:])
-      addr = socket.getaddrinfo(m.group(1), port)[0][-1]
+      addr = socket.getaddrinfo(m.group(1), int(port[1:]))[0][-1]
       return (None, m.group(3) or '/',addr[0],addr[1])
+    
+    else:
+      return ('Invalid URL String',None,None)
+    
 
   @staticmethod
   def response(req,send):

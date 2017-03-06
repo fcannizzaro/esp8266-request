@@ -35,6 +35,7 @@ if not err and response['statusCode'] is 200:
 - example.com
 - example.com:8080
 - example.com/path/to
+- 93.184.216.34
 
 # Request
 Use python dictionaries for headers and post data.
