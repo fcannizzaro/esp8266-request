@@ -42,8 +42,8 @@ Use python dictionaries for headers and post data.
 
 # Response
 ```python
-status = response.statusCode  # 200, 404 ..
-headers = response.headers    
+status = response['statusCode']  # 200, 404 ..
+headers = response['headers'] 
 ```
 
 # JSON
