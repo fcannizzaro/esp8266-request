@@ -24,7 +24,7 @@ data = {
 }
 
 # Response Body as file
-err, _ = Request.post('httpbin.org/post', data, file='response.json')
+err, _ = Request.post('httpbin.org/post', data, file='response.txt')
 ```
 
 # Valid URL
