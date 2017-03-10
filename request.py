@@ -64,7 +64,7 @@ class Request:
         elif ":" in value:
           line = value.split(':', 1)
           key = line[0]
-          headers[key] = line[1][1:]
+          headers[key] = line[1].strip()
 
       if "application/json" in (headers['Content-Type'] or headers['content-type'] or ''):
         body = json.loads(body)
