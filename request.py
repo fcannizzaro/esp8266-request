@@ -72,7 +72,7 @@ class Request:
       # Extract status code
       _, statusCode, _ = split[0].split(' ', 2)
     
-      return (None, Response(int(statusCode), headers, body))
+      return (None, Response(int(statusCode), body, headers))
 
     req.close()
     
